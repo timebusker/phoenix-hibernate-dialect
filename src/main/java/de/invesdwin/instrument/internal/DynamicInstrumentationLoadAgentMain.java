@@ -10,26 +10,24 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
-// @Immutable
+/**
+ *
+ */
 public final class DynamicInstrumentationLoadAgentMain {
 
-    private DynamicInstrumentationLoadAgentMain() {}
+    private DynamicInstrumentationLoadAgentMain() {
+    }
 
     public static void main(final String[] args) {
         if (args.length != 2) {
-            throw new IllegalArgumentException("Usage: " + DynamicInstrumentationLoadAgentMain.class.getSimpleName()
-                    + " <pid> <agentJarAbsolutePath>");
+            throw new IllegalArgumentException("Usage: " + DynamicInstrumentationLoadAgentMain.class.getSimpleName() + " <pid> <agentJarAbsolutePath>");
         }
         final String pid = args[0];
         final String agentJarAbsolutePath = args[1];
         loadAgent(pid, agentJarAbsolutePath);
     }
 
-    /**
-     * https://github.com/jmockit/jmockit1/blob/8ea057ffe08a3ef9788ee383db695a3a404d3c86/main/src/mockit/internal/startup/AgentLoader.java
-     * 
-     * http://tuhrig.de/implementing-interfaces-and-abstract-classes-on-the-fly/
-     */
+
     public static void loadAgent(final String pid, final String agentJarAbsolutePath) {
         //use reflection since tools.jar has been added to the classpath dynamically
         try {
@@ -40,8 +38,7 @@ public final class DynamicInstrumentationLoadAgentMain {
             if (providers.isEmpty()) {
                 final String virtualMachineClassName = findVirtualMachineClassNameAccordingToOS();
                 virtualMachineClass = Class.forName(virtualMachineClassName);
-                final Constructor<?> vmConstructor = virtualMachineClass.getDeclaredConstructor(attachProviderClass,
-                        String.class);
+                final Constructor<?> vmConstructor = virtualMachineClass.getDeclaredConstructor(attachProviderClass, String.class);
                 vmConstructor.setAccessible(true);
                 final ProxyFactory proxyFactory = new ProxyFactory();
                 proxyFactory.setSuperclass(attachProviderClass);
@@ -49,8 +46,7 @@ public final class DynamicInstrumentationLoadAgentMain {
                 final Object attachProvider = proxyClass.newInstance();
                 ((ProxyObject) attachProvider).setHandler(new MethodHandler() {
                     @Override
-                    public Object invoke(final Object self, final Method thisMethod, final Method proceed,
-                            final Object[] args) throws Throwable {
+                    public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
                         return null;
                     }
                 });
@@ -86,7 +82,6 @@ public final class DynamicInstrumentationLoadAgentMain {
         if (File.separatorChar == '\\') {
             return "sun.tools.attach.WindowsVirtualMachine";
         }
-
         //CHECKSTYLE:OFF
         final String osName = System.getProperty("os.name");
         //CHECKSTYLE:ON
@@ -94,19 +89,15 @@ public final class DynamicInstrumentationLoadAgentMain {
         if (osName.startsWith("Linux") || osName.startsWith("LINUX")) {
             return "sun.tools.attach.LinuxVirtualMachine";
         }
-
         if (osName.contains("FreeBSD") || osName.startsWith("Mac OS X")) {
             return "sun.tools.attach.BsdVirtualMachine";
         }
-
         if (osName.startsWith("Solaris") || osName.contains("SunOS")) {
             return "sun.tools.attach.SolarisVirtualMachine";
         }
-
         if (osName.contains("AIX")) {
             return "sun.tools.attach.AixVirtualMachine";
         }
-
         throw new IllegalStateException("Cannot use Attach API on unknown OS: " + osName);
     }
 
@@ -115,11 +106,9 @@ public final class DynamicInstrumentationLoadAgentMain {
         final String vmName = System.getProperty("java.vm.name");
         //CHECKSTYLE:ON
         String helpMessage = "To run on " + vmName;
-
         if (vmName.contains("J9")) {
             helpMessage += ", add <IBM SDK>/lib/tools.jar to the runtime classpath (before invesdwin-instrument), or";
         }
-
         return helpMessage + " use -javaagent:invesdwin-instrument.jar";
     }
 

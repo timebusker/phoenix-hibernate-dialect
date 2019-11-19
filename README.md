@@ -52,7 +52,7 @@ Register the dialect in your persistence unit in the persistence.xml file.
             <property name="javax.persistence.jdbc.url" value="jdbc:phoenix:<server:ip>:<path>" />
             <property name="javax.persistence.jdbc.user" value="" />
             <property name="javax.persistence.jdbc.password" value="" />
-            <property name="hibernate.dialect" value="com.ruesga.phoenix.dialect.PhoenixDialect" />
+            <property name="hibernate.dialect" value="com.timebusker.phoenix.dialect.PhoenixDialect" />
             ...
         </properties>
     </persistence-unit>

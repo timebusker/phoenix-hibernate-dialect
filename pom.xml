@@ -15,46 +15,29 @@
      limitations under the License.
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
         http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.ruesga.phoenix</groupId>
+    <groupId>com.timebusker</groupId>
     <artifactId>phoenix-hibernate-dialect</artifactId>
     <packaging>jar</packaging>
     <version>0.0.4-hibernate5</version>
     <name>phoenix-hibernate-dialect</name>
     <description>An Apache Phoenix Hibernate dialect.</description>
-    <url>https://github.com/jruesga/phoenix-hibernate-dialect</url>
     <inceptionYear>2017</inceptionYear>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>Jorge Ruesga</name>
-            <email>jorge@ruesga.com</email>
-        </developer>
-    </developers>
-    <scm>
-        <connection>scm:git:https://github.com/jruesga/phoenix-hibernate-dialect.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jruesga/phoenix-hibernate-dialect.git</developerConnection>
-        <url>http://github.com/jruesga/phoenix-hibernate-dialect</url>
-        <tag>HEAD</tag>
-    </scm>
-    <issueManagement>
-        <system>github</system>
-        <url>https://github.com/jruesga/phoenix-hibernate-dialect/issues</url>
-    </issueManagement>
+
     <distributionManagement>
         <repository>
-            <id>bintray-repo-maven</id>
-            <url>https://api.bintray.com/maven/jruesga/maven/phoenix-hibernate-dialect/;publish=1</url>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://localhost:10000/nexus/content/repositories/releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://localhost:10000/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
     <build>
         <testResources>

@@ -1,11 +1,14 @@
 package de.invesdwin.instrument.internal;
 
-// @NotThreadSafe
+/**
+ *
+ */
 public final class AgentClassLoaderReference {
 
     private static ClassLoader agentClassLoader;
 
-    private AgentClassLoaderReference() {}
+    private AgentClassLoaderReference() {
+    }
 
     public static ClassLoader getAgentClassLoader() {
         final ClassLoader classLoader = agentClassLoader;

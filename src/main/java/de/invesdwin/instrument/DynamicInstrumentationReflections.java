@@ -34,9 +34,7 @@ public final class DynamicInstrumentationReflections {
         }
         try {
             final String normalizedPath = FilenameUtils.normalize(dirOrJar.getAbsolutePath());
-            org.assertj.core.api.Assertions.assertThat(pathsAddedToSystemClassLoader.add(normalizedPath))
-                    .as("Path [%s] has already been added before!", normalizedPath)
-                    .isTrue();
+            org.assertj.core.api.Assertions.assertThat(pathsAddedToSystemClassLoader.add(normalizedPath)).as("Path [%s] has already been added before!", normalizedPath).isTrue();
             final URL url = new File(normalizedPath).toURI().toURL();
             if (isBeforeJava9()) {
                 addUrlToURLClassLoader(url);
@@ -65,8 +63,7 @@ public final class DynamicInstrumentationReflections {
         return getSystemClassLoader() instanceof URLClassLoader;
     }
 
-    private static void addUrlToURLClassLoader(final URL url)
-            throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
+    private static void addUrlToURLClassLoader(final URL url) throws NoSuchMethodException, MalformedURLException, IllegalAccessException, InvocationTargetException {
         final ClassLoader systemClassLoader = getSystemClassLoader();
         final Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
         method.setAccessible(true);

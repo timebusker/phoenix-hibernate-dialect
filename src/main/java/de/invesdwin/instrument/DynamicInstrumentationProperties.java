@@ -23,7 +23,8 @@ public final class DynamicInstrumentationProperties {
         TEMP_DIRECTORY = newTempDirectory(new File(systemTempDir));
     }
 
-    private DynamicInstrumentationProperties() {}
+    private DynamicInstrumentationProperties() {
+    }
 
     public static File newTempDirectory(final File baseDirectory) {
         final File tempDir = findEmptyTempDir(baseDirectory);
@@ -57,5 +58,4 @@ public final class DynamicInstrumentationProperties {
         final String pid = nameOfRunningVM.substring(0, nameOfRunningVM.indexOf('@'));
         return pid;
     }
-
 }

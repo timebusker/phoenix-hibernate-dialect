@@ -20,18 +20,17 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.hibernate.dialect.Dialect;
 
-import com.ruesga.phoenix.dialect.PhoenixDialect;
+import com.timebusker.phoenix.dialect.PhoenixDialect;
 
 @Aspect
 public class MappingInterceptor {
+
     @Around("execution(java.lang.String org.hibernate.mapping.PrimaryKey.sqlConstraintString(..))")
     public String sqlConstraintStringAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Dialect dialect = (Dialect) joinPoint.getArgs()[0];
         if (!(dialect instanceof PhoenixDialect)) {
-            // Nothing to deal with
             return (String) joinPoint.proceed();
         }
-
         String statement = (String) joinPoint.proceed();
         return "CONSTRAINT pk " + statement;
     }

@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ruesga.phoenix.dialect;
+package com.timebusker.phoenix.dialect;
 
 import com.ruesga.phoenix.jpa.JpaEntityManager;
 import com.ruesga.phoenix.jpa.entities.*;
 import com.ruesga.phoenix.jpa.entities.Parameter;
 import org.apache.commons.math3.util.Pair;
-import org.hibernate.Criteria;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.Root;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;

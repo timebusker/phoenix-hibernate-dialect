@@ -70,7 +70,6 @@ public class JdkFilesFinder {
         //CHECKSTYLE:OFF
         String javaHome = System.getProperty("java.home");
         //CHECKSTYLE:ON
-
         File toolsJar = null;
         final String potentialFileName = "tools.jar";
         for (final File dir : potentialFolders) {
@@ -85,8 +84,7 @@ public class JdkFilesFinder {
 
     private void assertFileFound(final File toolsJar, final Object potentialFileNames) {
         org.assertj.core.api.Assertions.assertThat(toolsJar)
-                .as("No %s found in %s. Please make sure a JDK is installed and JAVA_HOME points there.",
-                        potentialFileNames, potentialFolders)
+                .as("No %s found in %s. Please make sure a JDK is installed and JAVA_HOME points there.", potentialFileNames, potentialFolders)
                 .exists();
     }
 
@@ -118,14 +116,12 @@ public class JdkFilesFinder {
                 directories.add(file);
             }
         }
-
         for (final File directory : directories) {
             final File file = findFileRecursive(directory, fileName);
             if (file != null) {
                 return file;
             }
         }
-
         return null;
     }
 

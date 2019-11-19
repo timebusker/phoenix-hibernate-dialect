@@ -50,9 +50,7 @@ public final class DynamicInstrumentationLoader {
             if (threadFailed != null) {
                 final String javaVersion = getJavaVersion();
                 final String javaHome = getJavaHome();
-                throw new RuntimeException("Additional information: javaVersion=" + javaVersion + "; javaHome="
-                        + javaHome + "; toolsJarPath=" + toolsJarPath + "; attachLibPath=" + attachLibPath,
-                        threadFailed);
+                throw new RuntimeException("Additional information: javaVersion=" + javaVersion + "; javaHome=" + javaHome + "; toolsJarPath=" + toolsJarPath + "; attachLibPath=" + attachLibPath, threadFailed);
             }
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -88,11 +86,8 @@ public final class DynamicInstrumentationLoader {
                         }
                     }
                 };
-
                 DynamicInstrumentationReflections.addPathToSystemClassLoader(tempAgentJar);
-
                 final JdkFilesFinder jdkFilesFinder = new JdkFilesFinder();
-
                 if (DynamicInstrumentationReflections.isBeforeJava9()) {
                     final File toolsJar = jdkFilesFinder.findToolsJar();
                     DynamicInstrumentationReflections.addPathToSystemClassLoader(toolsJar);
@@ -102,12 +97,10 @@ public final class DynamicInstrumentationLoader {
                     DynamicInstrumentationReflections.addPathToJavaLibraryPath(attachLib.getParentFile());
                     DynamicInstrumentationLoader.attachLibPath = attachLib.getAbsolutePath();
                 }
-
                 loadAgentThread.start();
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
-
         }
     }
 
@@ -115,7 +108,6 @@ public final class DynamicInstrumentationLoader {
         if (DynamicInstrumentationReflections.isBeforeJava9()) {
             DynamicInstrumentationLoadAgentMain.loadAgent(pid, tempAgentJar.getAbsolutePath());
         } else {
-            //-Djdk.attach.allowAttachSelf https://www.bountysource.com/issues/45231289-self-attach-fails-on-jdk9
             //workaround this limitation by attaching from a new process
             final File loadAgentJar = createTempJar(DynamicInstrumentationLoadAgentMain.class, false);
             final String javaExecutable = getJavaHome() + File.separator + "bin" + File.separator + "java";
@@ -152,10 +144,8 @@ public final class DynamicInstrumentationLoader {
         final File tempAgentClassLoaderJar = createTempJar(agentClassLoaderReferenceClass, false);
         DynamicInstrumentationReflections.addPathToSystemClassLoader(tempAgentClassLoaderJar);
         final ClassLoader systemClassLoader = DynamicInstrumentationReflections.getSystemClassLoader();
-        final Class<?> systemAgentClassLoaderReferenceClass = systemClassLoader
-                .loadClass(agentClassLoaderReferenceClass.getName());
-        final Method setAgentClassLoaderMethod = systemAgentClassLoaderReferenceClass
-                .getDeclaredMethod("setAgentClassLoader", ClassLoader.class);
+        final Class<?> systemAgentClassLoaderReferenceClass = systemClassLoader.loadClass(agentClassLoaderReferenceClass.getName());
+        final Method setAgentClassLoaderMethod = systemAgentClassLoaderReferenceClass.getDeclaredMethod("setAgentClassLoader", ClassLoader.class);
         setAgentClassLoaderMethod.invoke(null, DynamicInstrumentationReflections.getContextClassLoader());
     }
 

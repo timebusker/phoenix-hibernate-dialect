@@ -1,19 +1,4 @@
-/*
- * Copyright (C) 2017 Jorge Ruesga
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.ruesga.phoenix.dialect;
+package com.timebusker.phoenix.dialect;
 
 import java.sql.Types;
 import java.util.Iterator;
@@ -41,6 +26,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.invesdwin.instrument.DynamicInstrumentationLoader;
 
+/**
+ *
+ */
 public class PhoenixDialect extends Dialect {
 
     public static final String HINT_SECONDARY_INDEX = "phoenix.secondary.index";
@@ -55,8 +43,7 @@ public class PhoenixDialect extends Dialect {
         }
 
         public SecondaryIndexHint(Class<?> annotated, String index) {
-            javax.persistence.Table table = (javax.persistence.Table) annotated.getAnnotation(
-                    javax.persistence.Table.class);
+            javax.persistence.Table table = (javax.persistence.Table) annotated.getAnnotation(javax.persistence.Table.class);
             String name = table.name();
             String schema = table.schema();
             this.table = (schema != null ? schema + "." : "") + name;
@@ -69,9 +56,11 @@ public class PhoenixDialect extends Dialect {
     }
 
     private static ClassPathXmlApplicationContext ctx;
+
     static {
         register();
     }
+
     public static synchronized void register() {
         if (ctx == null) {
             DynamicInstrumentationLoader.waitForInitialized();
@@ -82,7 +71,6 @@ public class PhoenixDialect extends Dialect {
 
     public PhoenixDialect() {
         super();
-
         // Phoenix datetypes (https://phoenix.apache.org/language/datatypes.html)
         registerColumnType(Types.BIT, "boolean");
         registerColumnType(Types.BIGINT, "bigint");
@@ -99,23 +87,17 @@ public class PhoenixDialect extends Dialect {
         registerColumnType(Types.BOOLEAN, "boolean");
         registerColumnType(Types.VARCHAR, 255, "varchar($l)");
         registerColumnType(Types.CHAR, "char(1)");
-        registerColumnType(Types.BINARY, "binary($l)" );
+        registerColumnType(Types.BINARY, "binary($l)");
         registerColumnType(Types.VARBINARY, "varbinary");
         registerColumnType(Types.ARRAY, "array[$l]");
 
         // Phoenix functions (https://phoenix.apache.org/language/functions.html)
-        registerFunction("percentile_cont_asc", new SQLFunctionTemplate(
-                StandardBasicTypes.DOUBLE, "PERCENTILE_CONT (?1) WITHIN GROUP (ORDER BY ?2 ASC)"));
-        registerFunction("percentile_cont_desc", new SQLFunctionTemplate(
-                StandardBasicTypes.DOUBLE, "PERCENTILE_CONT (?1) WITHIN GROUP (ORDER BY ?2 DESC)"));
-        registerFunction("percentile_disc_asc", new SQLFunctionTemplate(
-                StandardBasicTypes.DOUBLE, "PERCENTILE_DISC (?1) WITHIN GROUP (ORDER BY ?2 ASC)"));
-        registerFunction("percentile_disc_desc", new SQLFunctionTemplate(
-                StandardBasicTypes.DOUBLE, "PERCENTILE_DISC (?1) WITHIN GROUP (ORDER BY ?2 DESC)"));
-        registerFunction("percent_rank_asc", new SQLFunctionTemplate(
-                StandardBasicTypes.DOUBLE, "PERCENT_RANK (?1) WITHIN GROUP (ORDER BY ?2 ASC)"));
-        registerFunction("percent_rank_desc", new SQLFunctionTemplate(
-                StandardBasicTypes.DOUBLE, "PERCENT_RANK (?1) WITHIN GROUP (ORDER BY ?2 DESC)"));
+        registerFunction("percentile_cont_asc", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "PERCENTILE_CONT (?1) WITHIN GROUP (ORDER BY ?2 ASC)"));
+        registerFunction("percentile_cont_desc", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "PERCENTILE_CONT (?1) WITHIN GROUP (ORDER BY ?2 DESC)"));
+        registerFunction("percentile_disc_asc", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "PERCENTILE_DISC (?1) WITHIN GROUP (ORDER BY ?2 ASC)"));
+        registerFunction("percentile_disc_desc", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "PERCENTILE_DISC (?1) WITHIN GROUP (ORDER BY ?2 DESC)"));
+        registerFunction("percent_rank_asc", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "PERCENT_RANK (?1) WITHIN GROUP (ORDER BY ?2 ASC)"));
+        registerFunction("percent_rank_desc", new SQLFunctionTemplate(StandardBasicTypes.DOUBLE, "PERCENT_RANK (?1) WITHIN GROUP (ORDER BY ?2 DESC)"));
         registerFunction("stddev_pop", new StandardSQLFunction("stddev_pop", StandardBasicTypes.DOUBLE));
         registerFunction("stddev_samp", new StandardSQLFunction("stddev_samp", StandardBasicTypes.DOUBLE));
 
@@ -219,7 +201,7 @@ public class PhoenixDialect extends Dialect {
     }
 
 
-     // limit/offset support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // limit/offset support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public LimitHandler getLimitHandler() {
@@ -234,8 +216,7 @@ public class PhoenixDialect extends Dialect {
                 if (LimitHelper.useLimit(this, selection)) {
                     final boolean hasMaxRows = LimitHelper.hasMaxRows(selection);
                     final boolean hasOffset = LimitHelper.hasFirstRow(selection);
-                    return sql + (hasMaxRows ? " limit ?" : "")
-                                + (hasOffset ? " offset ?" : "");
+                    return sql + (hasMaxRows ? " limit ?" : "") + (hasOffset ? " offset ?" : "");
                 }
                 return sql;
             }
@@ -274,7 +255,6 @@ public class PhoenixDialect extends Dialect {
     }
 
 
-
     // DDL support ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
@@ -284,7 +264,7 @@ public class PhoenixDialect extends Dialect {
 
     @Override
     public String[] getDropSchemaCommand(String schemaName) {
-        return new String[] {"drop schema if exists " + schemaName};
+        return new String[]{"drop schema if exists " + schemaName};
     }
 
     @Override
@@ -329,8 +309,7 @@ public class PhoenixDialect extends Dialect {
 
     @Override
     public String getQueryHintString(String query, List<String> hints) {
-        return QueryUtils.removeQueryComments(query).trim().replaceFirst(
-                "select", "select " + StringUtils.join(hints, " ") + " ");
+        return QueryUtils.removeQueryComments(query).trim().replaceFirst("select", "select " + StringUtils.join(hints, " ") + " ");
     }
 
     @Override
@@ -364,27 +343,19 @@ public class PhoenixDialect extends Dialect {
             @Override
             public String getAlterTableToDropUniqueKeyCommand(UniqueKey uniqueKey, Metadata metadata) {
                 final JdbcEnvironment jdbcEnvironment = metadata.getDatabase().getJdbcEnvironment();
-
-                final String tableName = jdbcEnvironment.getQualifiedObjectNameFormatter().format(
-                        uniqueKey.getTable().getQualifiedTableName(), PhoenixDialect.this);
-
-                final String constraintName = PhoenixDialect.this.quote( uniqueKey.getName() );
-
+                final String tableName = jdbcEnvironment.getQualifiedObjectNameFormatter().format(uniqueKey.getTable().getQualifiedTableName(), PhoenixDialect.this);
+                final String constraintName = PhoenixDialect.this.quote(uniqueKey.getName());
                 return "drop index if exists " + constraintName + " on " + tableName;
             }
 
             @Override
             public String getAlterTableToAddUniqueKeyCommand(UniqueKey uniqueKey, Metadata metadata) {
                 final JdbcEnvironment jdbcEnvironment = metadata.getDatabase().getJdbcEnvironment();
-
-                final String tableName = jdbcEnvironment.getQualifiedObjectNameFormatter().format(
-                        uniqueKey.getTable().getQualifiedTableName(), PhoenixDialect.this);
-
-                final String constraintName = PhoenixDialect.this.quote( uniqueKey.getName() );
-
+                final String tableName = jdbcEnvironment.getQualifiedObjectNameFormatter().format(uniqueKey.getTable().getQualifiedTableName(), PhoenixDialect.this);
+                final String constraintName = PhoenixDialect.this.quote(uniqueKey.getName());
                 final StringBuilder columns = new StringBuilder();
                 final Iterator<org.hibernate.mapping.Column> columnIterator = uniqueKey.columnIterator();
-                while ( columnIterator.hasNext() ) {
+                while (columnIterator.hasNext()) {
                     final org.hibernate.mapping.Column column = columnIterator.next();
                     columns.append(column.getQuotedName(PhoenixDialect.this));
                     if (uniqueKey.getColumnOrderMap().containsKey(column)) {
@@ -394,11 +365,8 @@ public class PhoenixDialect extends Dialect {
                         columns.append(", ");
                     }
                 }
-
-                return "create index " + constraintName + " on " + tableName
-                        + " (" + columns.toString() + ")";
+                return "create index " + constraintName + " on " + tableName + " (" + columns.toString() + ")";
             }
         };
     }
-
 }

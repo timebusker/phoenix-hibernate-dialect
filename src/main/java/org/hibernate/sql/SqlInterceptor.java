@@ -24,7 +24,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.hibernate.dialect.Dialect;
 
-import com.ruesga.phoenix.dialect.PhoenixDialect;
+import com.timebusker.phoenix.dialect.PhoenixDialect;
 
 @Aspect
 public class SqlInterceptor {
@@ -50,7 +50,8 @@ public class SqlInterceptor {
             updateDialectField.setAccessible(true);
             updateVersionColumnNameField = Update.class.getDeclaredField("versionColumnName");
             updateVersionColumnNameField.setAccessible(true);
-        } catch (Exception e) {;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -61,7 +62,6 @@ public class SqlInterceptor {
             // Nothing to deal with
             return (String) joinPoint.proceed();
         }
-
         String statement = (String) joinPoint.proceed();
         if (joinPoint.getTarget() instanceof Insert || joinPoint.getTarget() instanceof InsertSelect) {
             return statement.replaceFirst("insert into", "upsert into");
@@ -87,20 +87,15 @@ public class SqlInterceptor {
     @SuppressWarnings("rawtypes")
     private String createUpsertValues(Update target) throws Throwable {
         StringBuilder sb = new StringBuilder();
-
         String comment = (String) updateCommentField.get(target);
-        if (comment!=null) {
+        if (comment != null) {
             sb.append("/* ").append(comment).append(" */ ");
         }
-
-        sb.append("upsert into ")
-            .append(target.getTableName())
-            .append(" (");
+        sb.append("upsert into ").append(target.getTableName()).append(" (");
         Map columns = (Map) updateColumnsField.get(target);
         Map pkColumns = (Map) updatePkColumnsField.get(target);
         Map whereColumns = (Map) updateWhereColumnsField.get(target);
         String versionColumn = (String) updateVersionColumnNameField.get(target);
-
         if (versionColumn == null) {
             // Set columns before pkcolumns and where columns to match parameter binding
             StringBuilder names = new StringBuilder();
@@ -109,7 +104,6 @@ public class SqlInterceptor {
             // TODO handle assignments
             updateUpsertBuffers(names, values, pkColumns, true);
             updateUpsertBuffers(names, values, whereColumns, true);
-
             sb.append(names).append(") values (").append(values).append(")");
         } else {
             // Set columns before pkcolumns and where columns to match parameter binding
@@ -121,36 +115,28 @@ public class SqlInterceptor {
             StringBuilder primaryKeys = new StringBuilder();
             updateUpsertBuffers(primaryKeys, new StringBuilder(), pkColumns, true);
 
-            sb.append(names).append(primaryKeys).append(") select ").append(values).append(primaryKeys)
-              .append(" from ").append(target.getTableName())
-              .append(" where ");
-
+            sb.append(names).append(primaryKeys).append(") select ").append(values).append(primaryKeys).append(" from ").append(target.getTableName()).append(" where ");
             boolean conditionsAppended = false;
             Map.Entry e;
-            for(Iterator iter = pkColumns.entrySet().iterator(); iter.hasNext(); conditionsAppended = true) {
-                e = (Map.Entry)iter.next();
+            for (Iterator iter = pkColumns.entrySet().iterator(); iter.hasNext(); conditionsAppended = true) {
+                e = (Map.Entry) iter.next();
                 sb.append(e.getKey()).append('=').append(e.getValue());
                 if (iter.hasNext()) {
                     sb.append(" and ");
                 }
             }
-
-            for(Iterator iter = whereColumns.entrySet().iterator(); iter.hasNext(); conditionsAppended = true) {
-                e = (Map.Entry)iter.next();
+            for (Iterator iter = whereColumns.entrySet().iterator(); iter.hasNext(); conditionsAppended = true) {
+                e = (Map.Entry) iter.next();
                 if (conditionsAppended) {
                     sb.append(" and ");
                 }
-
                 sb.append(e.getKey()).append(e.getValue());
             }
-
             if (conditionsAppended) {
                 sb.append(" and ");
             }
-
             sb.append(versionColumn).append("=?");
         }
-
         return sb.toString();
     }
 
